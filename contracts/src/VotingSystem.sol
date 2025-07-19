@@ -18,31 +18,46 @@ contract VotingSystem {
             Type declarations
     ///////////////////////////////////*/
 
-    // tipos de voto: nenhum, a favor ou contra
+    // @notice Tipos de voto
     enum VoteType {
         NONE,
         FOR,
         AGAINST
     }
+    /// @notice Estrutura da proposta
+    /// @param id único da proposta
+    /// @param title Título da proposta
+    /// @param description Descrição da proposta
+    /// @param votesFor Contador de votos a favor
+    /// @param votesAgainst Contador de votos contra
+    /// @param active Proposta ativa ou encerrada
+    /// @param deadline Timestamp de expiração da proposta
+    /// @dev A deadline é definida como o timestamp atual + duração da votação
 
-    // Estrutura que define uma proposta
     struct Proposal {
-        uint256 id; // ID único da proposta
-        string title; // Título da proposta
-        string description; // Descrição da proposta
-        uint256 votesFor; // Contador de votos a favor
-        uint256 votesAgainst; // Contador de votos contra
-        bool active; // proposta ativa ou encerrada
+        uint256 id;
+        string title;
+        string description;
+        uint256 votesFor;
+        uint256 votesAgainst;
+        bool active;
+        uint256 deadline;
     }
 
     /*///////////////////////////////////
                 Variables
     ///////////////////////////////////*/
 
-    // Contador total de propostas
+    /// @notice Duração da votação em segundos
+    /// @dev Definida como 1 semana (604800 segundos)
+    uint256 public constant VOTING_DURATION = 604800;
+
+    /// @notice Contador de propostas criadas
+    /// @dev Incrementa a cada nova proposta criada, usado como ID único
     uint256 public proposalCount;
 
-    // Mapeia ID da proposta para a struct da proposta
+    /// @notice Mapeia o ID da proposta para a estrutura Proposal
+    /// @dev Armazena todas as propostas criadas
     mapping(uint256 => Proposal) public proposals;
 
     // Mapeia: ID da proposta => endereço do votante => tipo de voto
@@ -86,7 +101,7 @@ contract VotingSystem {
     /// @param _title Título da proposta
     /// @param _description Descrição da proposta
     function createProposal(string memory _title, string memory _description) external {
-        // Incrementa o contador de propostas para ser o ID da nova proposta
+        // Incrementa o contador de propostas para ser o ID unico da nova proposta
         proposalCount++;
 
         // Cria nova proposta e armazena no mapeamento
@@ -96,7 +111,8 @@ contract VotingSystem {
             description: _description,
             votesFor: 0,
             votesAgainst: 0,
-            active: true
+            active: true,
+            deadline: block.timestamp + VOTING_DURATION
         });
 
         // evento de criação da proposta
@@ -107,14 +123,16 @@ contract VotingSystem {
     /// @param _proposalId ID da proposta a ser votada
     /// @param support true = a favor, false = contra
     function vote(uint256 _proposalId, bool support) external {
-        // se a proposta está ativa
+        // Verifica se a proposta está ativa
         Proposal storage proposal = proposals[_proposalId];
         require(proposal.active, "Proposta encerrada");
+        // Veirfica se a proposta não expirou
+        require(block.timestamp <= proposal.deadline, "Prazo de votacao expirado");
 
-        // Garante que o usuário ainda não votou nessa proposta!
+        // Verifica se o usuário ainda não votou nessa proposta!
         require(votes[_proposalId][msg.sender] == VoteType.NONE, "Ja votou nessa proposta");
 
-        // Registra o voto e atualiza contadores
+        // Registra o voto e incrementa contadores
         if (support) {
             proposal.votesFor++;
             votes[_proposalId][msg.sender] = VoteType.FOR;
