@@ -30,7 +30,6 @@ contract VotingSystem {
     /// @param description Descrição da proposta
     /// @param votesFor Contador de votos a favor
     /// @param votesAgainst Contador de votos contra
-    /// @param active Proposta ativa ou encerrada
     /// @param deadline Timestamp de expiração da proposta
     /// @dev A deadline é definida como o timestamp atual + duração da votação
 
@@ -40,7 +39,6 @@ contract VotingSystem {
         string description;
         uint256 votesFor;
         uint256 votesAgainst;
-        bool active;
         uint256 deadline;
     }
 
@@ -111,7 +109,6 @@ contract VotingSystem {
             description: _description,
             votesFor: 0,
             votesAgainst: 0,
-            active: true,
             deadline: block.timestamp + VOTING_DURATION
         });
 
@@ -123,9 +120,9 @@ contract VotingSystem {
     /// @param _proposalId ID da proposta a ser votada
     /// @param support true = a favor, false = contra
     function vote(uint256 _proposalId, bool support) external {
-        // Verifica se a proposta está ativa
+        // Verifica se a proposta existe
         Proposal storage proposal = proposals[_proposalId];
-        require(proposal.active, "Proposta encerrada");
+        require(proposal.id != 0, "Proposta inexistente");
         // Veirfica se a proposta não expirou
         require(block.timestamp <= proposal.deadline, "Prazo de votacao expirado");
 
@@ -153,9 +150,9 @@ contract VotingSystem {
     /// @param _proposalId id da proposta
     /// @return string Resultado: "Aprovada" ou "Rejeitada"
     function getResult(uint256 _proposalId) public view returns (string memory) {
-        // se a proposta está ativa
+        // Verifica se a proposta existe
         Proposal memory proposal = proposals[_proposalId];
-        require(proposal.active, "Proposta encerrada");
+        require(proposal.id != 0, "Proposta inexistente");
 
         // se  votesFor > votesAgainst = "Aprovada", senão "Rejeitada"
         if (proposal.votesFor > proposal.votesAgainst) {
