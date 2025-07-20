@@ -37,12 +37,18 @@ contract VotingSystemTest is Test {
         vm.prank(user1);
         votingSystem.vote(1, true);
 
+        // Verifica o resultado antes do prazo
+        (,,, uint256 votesFor, uint256 votesAgainst,, VotingSystem.ResultType result) = votingSystem.proposals(1);
+        assertEq(votesFor, 1, "Votos a favor devem ser 1");
+        assertEq(votesAgainst, 0, "Votos contra devem ser 0");
+        assertEq(uint256(result), uint256(VotingSystem.ResultType.APPROVED), "Resultado deve ser APPROVED");
+
         // Avança o tempo para após o prazo (1 semana + 1 segundo)
         vm.warp(block.timestamp + 604801);
 
         // Verifica se resultado é "Aprovada"
-        string memory result = votingSystem.getResult(1);
-        assertEq(result, "Aprovada", "Resultado deve ser Aprovada com voto a favor");
+        string memory resultStr = votingSystem.getResult(1);
+        assertEq(resultStr, "Aprovada", "Resultado deve ser Aprovada com voto a favor");
 
         // Cria outra proposta para testar empate/rejeitada
         votingSystem.createProposal("Test Proposal 2", "Test Description 2");
@@ -51,11 +57,17 @@ contract VotingSystemTest is Test {
         vm.prank(user2);
         votingSystem.vote(2, false);
 
+        // Verifica o resultado antes do prazo (empate)
+        (,,, votesFor, votesAgainst,, result) = votingSystem.proposals(2);
+        assertEq(votesFor, 1, "Votos a favor devem ser 1");
+        assertEq(votesAgainst, 1, "Votos contra devem ser 1");
+        assertEq(uint256(result), uint256(VotingSystem.ResultType.REJECTED), "Resultado deve ser REJECTED em empate");
+
         // Avança o tempo para após o prazo
         vm.warp(block.timestamp + 604801);
 
         // Verifica o resultado (empate resulta em Rejeitada)
-        result = votingSystem.getResult(2);
-        assertEq(result, "Rejeitada", "Resultado deve ser Rejeitada em caso de empate");
+        resultStr = votingSystem.getResult(2);
+        assertEq(resultStr, "Rejeitada", "Resultado deve ser Rejeitada em caso de empate");
     }
 }

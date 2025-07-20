@@ -24,6 +24,12 @@ contract VotingSystem {
         FOR,
         AGAINST
     }
+    // @notice Tipos de resultado da proposta
+    enum ResultType {
+        APPROVED,
+        REJECTED
+    }
+
     /// @notice Estrutura da proposta
     /// @param id único da proposta
     /// @param title Título da proposta
@@ -31,6 +37,7 @@ contract VotingSystem {
     /// @param votesFor Contador de votos a favor
     /// @param votesAgainst Contador de votos contra
     /// @param deadline Timestamp de expiração da proposta
+    /// @param result Resultado da proposta (Aprovada ou Rejeitada) - Inicia como Rejeitada
     /// @dev A deadline é definida como o timestamp atual + duração da votação
 
     struct Proposal {
@@ -40,6 +47,7 @@ contract VotingSystem {
         uint256 votesFor;
         uint256 votesAgainst;
         uint256 deadline;
+        ResultType result;
     }
 
     /*///////////////////////////////////
@@ -109,7 +117,8 @@ contract VotingSystem {
             description: _description,
             votesFor: 0,
             votesAgainst: 0,
-            deadline: block.timestamp + VOTING_DURATION
+            deadline: block.timestamp + VOTING_DURATION,
+            result: ResultType.REJECTED
         });
 
         // evento de criação da proposta
@@ -138,6 +147,13 @@ contract VotingSystem {
             votes[_proposalId][msg.sender] = VoteType.AGAINST;
         }
 
+        // Atualiza o resultado da proposta
+        if (proposal.votesFor > proposal.votesAgainst) {
+            proposal.result = ResultType.APPROVED;
+        } else {
+            proposal.result = ResultType.REJECTED;
+        }
+
         // evento de voto
         emit VoteReceived(_proposalId);
     }
@@ -154,8 +170,8 @@ contract VotingSystem {
         Proposal memory proposal = proposals[_proposalId];
         require(proposal.id != 0, "Proposta inexistente");
 
-        // se  votesFor > votesAgainst = "Aprovada", senão "Rejeitada"
-        if (proposal.votesFor > proposal.votesAgainst) {
+        // Retorna o resultado armazenado
+        if (proposal.result == ResultType.APPROVED) {
             return "Aprovada";
         } else {
             return "Rejeitada";
