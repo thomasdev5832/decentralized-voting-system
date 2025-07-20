@@ -28,6 +28,21 @@ contract VotingSystemTest is Test {
         votingSystem.vote(1, true);
     }
 
+    /// @notice Teste se o usuario já votou na proposta
+    function testUserAlreadyVoted() public {
+        // Cria uma proposta
+        votingSystem.createProposal("Test Proposal", "Test Description");
+
+        // User1 vota a favor
+        vm.prank(user1);
+        votingSystem.vote(1, true);
+
+        // User1 tenta votar novamente e recebe erro
+        vm.prank(user1);
+        vm.expectRevert("Ja votou nessa proposta");
+        votingSystem.vote(1, false);
+    }
+
     /// @notice Testa o resultado de uma proposta após o prazo
     function testGetResultAfterDeadline() public {
         // Cria uma proposta

@@ -20,7 +20,6 @@ contract VotingSystem {
 
     // @notice Tipos de voto
     enum VoteType {
-        NONE,
         FOR,
         AGAINST
     }
@@ -68,6 +67,9 @@ contract VotingSystem {
 
     // Mapeia: ID da proposta => endereço do votante => tipo de voto
     mapping(uint256 => mapping(address => VoteType)) private votes;
+
+    /// @notice Mapeia: ID da proposta => endereço do votante => se já votou
+    mapping(uint256 => mapping(address => bool)) private hasVoted;
 
     /*///////////////////////////////////
                 Events
@@ -135,8 +137,8 @@ contract VotingSystem {
         // Veirfica se a proposta não expirou
         require(block.timestamp <= proposal.deadline, "Prazo de votacao expirado");
 
-        // Verifica se o usuário ainda não votou nessa proposta!
-        require(votes[_proposalId][msg.sender] == VoteType.NONE, "Ja votou nessa proposta");
+        // Verifica se o usuário ainda não votou nessa proposta
+        require(!hasVoted[_proposalId][msg.sender], "Ja votou nessa proposta");
 
         // Registra o voto e incrementa contadores
         if (support) {
@@ -146,6 +148,9 @@ contract VotingSystem {
             proposal.votesAgainst++;
             votes[_proposalId][msg.sender] = VoteType.AGAINST;
         }
+
+        // Marca que o usuário já votou nessa proposta
+        hasVoted[_proposalId][msg.sender] = true;
 
         // Atualiza o resultado da proposta
         if (proposal.votesFor > proposal.votesAgainst) {
