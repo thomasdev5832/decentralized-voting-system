@@ -14,6 +14,29 @@ contract VotingSystemTest is Test {
         votingSystem = new VotingSystem();
     }
 
+    /// @notice Testa a criacao de uma proposta
+    function testCreateProposal() public {
+        // Cria uma proposta
+        votingSystem.createProposal("Test Proposal", "Test Description");
+        // Verifica se a proposta foi criada corretamente
+        (
+            uint256 id,
+            string memory title,
+            string memory description,
+            uint256 votesFor,
+            uint256 votesAgainst,
+            uint256 deadline,
+            VotingSystem.ResultType result
+        ) = votingSystem.proposals(1);
+        assertEq(id, 1, "ID da proposta deve ser 1");
+        assertEq(title, "Test Proposal", "Titulo da proposta deve ser 'Test Proposal'");
+        assertEq(description, "Test Description", "Descricao da proposta deve ser 'Test Description'");
+        assertEq(votesFor, 0, "Votos a favor devem ser 0");
+        assertEq(votesAgainst, 0, "Votos contra devem ser 0");
+        assertEq(deadline, block.timestamp + 604800, "Prazo da proposta deve ser 1 semana a partir de agora");
+        assertEq(uint256(result), uint256(VotingSystem.ResultType.REJECTED), "Resultado inicial deve ser REJECTED");
+    }
+
     /// @notice Testa se votos após o prazo são recusados
     function testVotesAfterDeadline() public {
         // Cria uma proposta
