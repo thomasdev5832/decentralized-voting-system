@@ -28,6 +28,15 @@ contract VotingSystemTest is Test {
         votingSystem.vote(1, true);
     }
 
+    /// @notice Teste para verificar se a proposta dura 1 semana
+    function testProposalDuration() public {
+        // Cria uma proposta
+        votingSystem.createProposal("Test Proposal", "Test Description");
+        // Verifica se a proposta foi criada com o prazo correto
+        (,,,,, uint256 deadline,) = votingSystem.proposals(1);
+        assertEq(deadline, block.timestamp + 604800, "Prazo da proposta deve ser 1 semana");
+    }
+
     /// @notice Teste se o usuario já votou na proposta
     function testUserAlreadyVoted() public {
         // Cria uma proposta
@@ -41,6 +50,22 @@ contract VotingSystemTest is Test {
         vm.prank(user1);
         vm.expectRevert("Ja votou nessa proposta");
         votingSystem.vote(1, false);
+    }
+
+    /// @notice Teste se qualquer pessoa pode consultar votos “a favor” e “contra”
+    function testAnyoneCanConsultVotes() public {
+        // Cria uma proposta
+        votingSystem.createProposal("Test Proposal", "Test Description");
+
+        // User1 vota a favor
+        vm.prank(user1);
+        votingSystem.vote(1, true);
+
+        // User2 tenta consultar os votos
+        vm.prank(user2);
+        (,,, uint256 votesFor, uint256 votesAgainst,,) = votingSystem.proposals(1);
+        assertEq(votesFor, 1, "Votos a favor devem ser 1");
+        assertEq(votesAgainst, 0, "Votos contra devem ser 0");
     }
 
     /// @notice Testa o resultado de uma proposta após o prazo
