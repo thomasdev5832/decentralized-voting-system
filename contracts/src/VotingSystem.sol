@@ -109,6 +109,9 @@ contract VotingSystem {
     /// @param _title Título da proposta
     /// @param _description Descrição da proposta
     function createProposal(string memory _title, string memory _description) external {
+        // Verifica se o titulo e descricao nao estão vazios
+        require(bytes(_title).length > 0, "Titulo nao pode ser vazio");
+        require(bytes(_description).length > 0, "Descricao nao pode ser vazia");
         // Incrementa o contador de propostas para ser o ID unico da nova proposta
         proposalCount++;
 
