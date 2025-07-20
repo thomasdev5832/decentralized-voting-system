@@ -20,13 +20,13 @@ contract VotingSystem {
 
     // @notice Tipos de voto
     enum VoteType {
-        FOR,
-        AGAINST
+        AGAINST,
+        FOR
     }
     // @notice Tipos de resultado da proposta
     enum ResultType {
-        APPROVED,
-        REJECTED
+        REJECTED,
+        APPROVED
     }
 
     /// @notice Estrutura da proposta
