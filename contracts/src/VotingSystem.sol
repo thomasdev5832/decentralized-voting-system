@@ -18,17 +18,11 @@ contract VotingSystem {
             Type declarations
     ///////////////////////////////////*/
 
-    // @notice Tipos de voto
-    enum VoteType {
-        AGAINST,
-        FOR
-    }
     // @notice Tipos de resultado da proposta
     enum ResultType {
         REJECTED,
         APPROVED
     }
-
     /// @notice Estrutura da proposta
     /// @param id único da proposta
     /// @param title Título da proposta
@@ -64,9 +58,6 @@ contract VotingSystem {
     /// @notice Mapeia o ID da proposta para a estrutura Proposal
     /// @dev Armazena todas as propostas criadas
     mapping(uint256 => Proposal) public proposals;
-
-    // Mapeia: ID da proposta => endereço do votante => tipo de voto
-    mapping(uint256 => mapping(address => VoteType)) private votes;
 
     /// @notice Mapeia: ID da proposta => endereço do votante => se já votou
     mapping(uint256 => mapping(address => bool)) private hasVoted;
@@ -146,10 +137,8 @@ contract VotingSystem {
         // Registra o voto e incrementa contadores
         if (support) {
             proposal.votesFor++;
-            votes[_proposalId][msg.sender] = VoteType.FOR;
         } else {
             proposal.votesAgainst++;
-            votes[_proposalId][msg.sender] = VoteType.AGAINST;
         }
 
         // Marca que o usuário já votou nessa proposta
