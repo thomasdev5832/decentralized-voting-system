@@ -1,9 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { ETH_SEPOLIA_CHAIN_ID, ETH_SEPOLIA_RPC } from '../config/config';
 
-export const ConnectWallet = ({ onConnected }: { onConnected: (account: string, signer: ethers.Signer) => void }) => {
+interface Props {
+    onConnected: (account: string, signer: ethers.Signer) => void;
+}
+
+export const ConnectWallet = ({ onConnected }: Props) => {
     const [loading, setLoading] = useState(false);
+    const [account, setAccount] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Se já está conectado, recupera via Ethereum provider
+        const checkConnection = async () => {
+            if (window.ethereum) {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    setAccount(accounts[0]);
+                }
+            }
+        };
+        checkConnection();
+    }, []);
 
     const connectWallet = async () => {
         setLoading(true);
@@ -20,6 +38,7 @@ export const ConnectWallet = ({ onConnected }: { onConnected: (account: string, 
             const signer = await provider.getSigner();
             const address = await signer.getAddress();
 
+            setAccount(address);
             onConnected(address, signer);
         } catch (err) {
             console.error('Wallet connection error:', err);
@@ -28,13 +47,32 @@ export const ConnectWallet = ({ onConnected }: { onConnected: (account: string, 
         }
     };
 
+    const disconnectWallet = () => {
+        setAccount(null);
+        onConnected('', null);
+    };
+
+    const maskAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+
     return (
-        <button
-            onClick={connectWallet}
-            className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-            disabled={loading}
-        >
-            {loading ? 'Connecting...' : 'Connect Wallet'}
-        </button>
+        <>
+            {!account ? (
+                <button
+                    onClick={connectWallet}
+                    className="px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition cursor-pointer"
+                    disabled={loading}
+                >
+                    {loading ? 'Connecting...' : 'Connect Wallet'}
+                </button>
+            ) : (
+                <button
+                    onClick={disconnectWallet}
+                    className="px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition cursor-pointer"
+                    title="Click to disconnect"
+                >
+                    {maskAddress(account)}
+                </button>
+            )}
+        </>
     );
 };

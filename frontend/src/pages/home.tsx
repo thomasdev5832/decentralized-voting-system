@@ -68,23 +68,19 @@ export const Home = () => {
     }, []);
 
     return (
-        <div className="max-w-5xl min-h-screen mx-auto flex flex-col items-center justify-start p-4 text-center bg-neutral-950 text-white">
-            <h1 className="text-3xl font-bold text-green-400">Sistema de Votação Descentralizado</h1>
-            {!account ? (
+        <div className="max-w-5xl min-h-screen mx-auto flex flex-col items-center justify-start p-2 text-center bg-neutral-950 text-white">
+            <header className="w-full flex flex-row items-center justify-between">
+                <h1 className="text-sm font-semibold uppercase text-zinc-100">Sistema de Votação Descentralizado</h1>
                 <ConnectWallet
-                    onConnected={(addr, signer) => {
-                        setAccount(addr);
+                    onConnected={(address, signer) => {
+                        setAccount(address);
                         setSigner(signer);
                     }}
                 />
-            ) : (
-                <div className="mt-4 text-green-300">
-                    Conectado: {account.slice(0, 6)}...{account.slice(-4)}
-                </div>
-            )}
+            </header>
 
             <div className="mt-8 w-full">
-                <h2 className="text-xl text-green-400 mb-4">Propostas</h2>
+                <h2 className="text-xl font-medium text-green-400 mb-4">Propostas</h2>
                 {loading ? (
                     <div>Carregando propostas...</div>
                 ) : proposals.length === 0 ? (
@@ -92,7 +88,7 @@ export const Home = () => {
                 ) : (
                     <ProposalsList proposals={proposals} onVote={vote} loading={loading} />
                 )}
-                {error && <div className="text-red-400 mt-4">{error}</div>}
+                {error && <div className="text-green-400 mt-4">{error}</div>}
             </div>
         </div>
     );
