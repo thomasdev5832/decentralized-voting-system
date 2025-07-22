@@ -6,4 +6,5 @@ export interface Proposal {
   votesAgainst: string;
   deadline: string;
   result: number;
+  hasVoted?: boolean;
 }

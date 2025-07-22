@@ -5,6 +5,7 @@ import type { Proposal } from '../types';
 interface ProposalsContextType {
     proposals: Proposal[];
     loadProposals: () => Promise<void>;
+    setProposals: React.Dispatch<React.SetStateAction<Proposal[]>>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -19,7 +20,7 @@ export const ProposalsProvider = ({ children }: { children: React.ReactNode }) =
     }, []);
 
     return (
-        <ProposalsContext.Provider value={{ proposals, loadProposals }}>
+        <ProposalsContext.Provider value={{ proposals, loadProposals, setProposals }}>
             {children}
         </ProposalsContext.Provider>
     );

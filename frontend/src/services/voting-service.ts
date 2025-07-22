@@ -37,3 +37,9 @@ export const createProposal = async (title: string, description: string) => {
   const tx = await contract.createProposal(title, description);
   await tx.wait();
 };
+
+export const checkHasVoted = async (proposalId: number, voterAddress: string): Promise<boolean> => {
+  const contract = getReadContract();
+  const voted: boolean = await contract.hasVoted(proposalId, voterAddress);
+  return voted;
+};

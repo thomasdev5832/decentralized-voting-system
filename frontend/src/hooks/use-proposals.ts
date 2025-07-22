@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useContext } from 'react';
 import type { Proposal } from '../types';
-import { voteOnProposal } from '../services/voting-service';
+import { checkHasVoted, voteOnProposal } from '../services/voting-service';
 import { useWallet } from '../contexts/wallet-context';
 import { ProposalsContext } from '../contexts/proposals-context';
 
@@ -15,8 +15,8 @@ interface UseProposalsReturn {
 }
 
 export const useProposals = (): UseProposalsReturn => {
-  const { proposals, loadProposals } = useContext(ProposalsContext)!; // usa contexto global
-  const { signer } = useWallet();
+  const { proposals, loadProposals, setProposals } = useContext(ProposalsContext)!; // usa contexto global
+  const { signer, account } = useWallet();
 
   const [loadingProposals, setLoadingProposals] = useState(false);
   const [loadingVote, setLoadingVote] = useState(false);
@@ -28,14 +28,25 @@ export const useProposals = (): UseProposalsReturn => {
     setLoadingProposals(true);
     setErrorProposals(null);
     try {
-      await loadProposals(); // atualiza contexto global
+      await loadProposals(); // Carrega as propostas
+      if (account) {
+        const updatedProposals = await Promise.all(
+          proposals.map(async (proposal) => {
+            const hasVoted = await checkHasVoted(proposal.id, account);
+            return { ...proposal, hasVoted };
+          })
+        );
+        setProposals(updatedProposals); // Atualiza o contexto
+      } else {
+        console.log('Nenhuma conta conectada');
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Erro em loadProposalsWithStatus:', err);
       setErrorProposals('Erro ao carregar propostas');
     } finally {
       setLoadingProposals(false);
     }
-  }, [loadProposals]);
+  }, [loadProposals, account, setProposals]); 
 
   // Função votar
   const vote = useCallback(

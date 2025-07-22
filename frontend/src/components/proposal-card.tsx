@@ -22,20 +22,17 @@ export const ProposalCard = ({
 
     return (
         <>
-            <div className=" border border-neutral-800 rounded-md bg-gradient-to-b from-neutral-800/80 to-neutral-900 text-zinc-200 p-4 flex flex-col justify-between h-full shadow-sm">
+            <div className="border border-neutral-800 rounded-md bg-gradient-to-b from-neutral-800/80 to-neutral-900 text-zinc-200 p-4 flex flex-col justify-between h-full shadow-sm">
                 <div className="flex flex-col gap-3 text-left">
                     <h2 className="text-lg font-semibold leading-tight line-clamp-1">
                         {proposal.title}
                     </h2>
-
-                    <p className="text-xs text-neutral-300 line-clamp-2">
+                    <p className="text-sm text-neutral-300 font-medium line-clamp-2">
                         {proposal.description}
                     </p>
-
-                    <p className="text-xs font-medium text-neutral-300">
+                    <p className="text-sm font-medium text-neutral-300">
                         Prazo: {formatDeadline(proposal.deadline)}
                     </p>
-
                     <div className="grid grid-cols-2 gap-2 mt-2">
                         <div className="bg-neutral-800 rounded-sm py-3 flex flex-col items-center justify-center">
                             <span className="text-sm text-zinc-400 font-medium">A favor</span>
@@ -47,16 +44,21 @@ export const ProposalCard = ({
                         </div>
                     </div>
                 </div>
-
                 <div className="mt-2">
                     {account ? (
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            disabled={loading}
-                            className="w-full font-semibold bg-gradient-to-t from-neutral-700 to-neutral-600 hover:from-neutral-800 hover:to-neutral-700 text-neutral-50 py-2 px-4 rounded-sm transition disabled:opacity-50 cursor-pointer shadow-md"
-                        >
-                            Votar
-                        </button>
+                        proposal.hasVoted ? (
+                            <div className="text-center text-sm text-neutral-400 border border-neutral-700 rounded-md py-2 px-3 font-medium">
+                                Você já votou nesta proposta
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                disabled={loading}
+                                className="w-full font-semibold bg-gradient-to-t from-neutral-700 to-neutral-600 hover:from-neutral-800 hover:to-neutral-700 text-neutral-50 py-2 px-4 rounded-sm transition disabled:opacity-50 cursor-pointer shadow-md"
+                            >
+                                Votar
+                            </button>
+                        )
                     ) : (
                         <div className="text-center text-xs text-neutral-400 border border-neutral-700 rounded-md py-2 px-3 font-medium">
                             Conecte sua carteira para votar
@@ -74,9 +76,8 @@ export const ProposalCard = ({
                                 <h3 className="text-xl font-semibold text-left">
                                     Proposta: {proposal.title}
                                 </h3>
-                                <p className="text-sm text-neutral-400 mt-1 text-left">{proposal.description}</p>
+                                <p className="text-md text-neutral-400 mt-1 text-left">{proposal.description}</p>
                             </div>
-
                             <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-neutral-700">
                                 <button
                                     onClick={() => setIsModalOpen(false)}
@@ -84,7 +85,7 @@ export const ProposalCard = ({
                                 >
                                     Cancelar
                                 </button>
-                                <div className='flex flex-row gap-2 w-full sm:w-auto'>
+                                <div className="flex flex-row gap-2 w-full sm:w-auto">
                                     <button
                                         onClick={() => handleVote(false)}
                                         disabled={loading}
@@ -104,7 +105,6 @@ export const ProposalCard = ({
                         </div>
                     </div>
                 </div>
-
             )}
         </>
     );

@@ -69,6 +69,8 @@ export const CreateProposalModal = ({
                     disabled={isCreating}
                 />
 
+                <p className='mt-2 text-sm'>Sua proposta termina em <span className="font-semibold">1 semana</span></p>
+
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
                 <div className="flex justify-end mt-4 gap-2">
