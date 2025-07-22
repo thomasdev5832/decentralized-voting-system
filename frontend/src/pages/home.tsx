@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { ConnectWalletButton } from '../components/connect-wallet-button';
 import { ProposalsList } from '../components/proposal-list';
+import { CreateProposalModal } from '../components/create-proposal-modal';
+import { ProposalHeader } from '../components/proposal-header';
 
 export const Home = () => {
+    const [modalOpen, setModalOpen] = useState(false);
 
     return (
         <div className="max-w-5xl min-h-screen mx-auto flex flex-col items-center justify-start p-2 text-center bg-neutral-950 text-white">
@@ -11,9 +15,14 @@ export const Home = () => {
             </header>
 
             <div className="mt-8 w-full">
-                <h2 className="text-xl font-medium text-green-400 mb-4">Propostas</h2>
+                <ProposalHeader onOpenModal={() => setModalOpen(true)} />
                 <ProposalsList />
             </div>
+
+            <CreateProposalModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+            />
         </div>
     );
 };

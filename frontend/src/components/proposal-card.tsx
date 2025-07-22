@@ -34,14 +34,14 @@ export const ProposalCard = ({
             {account ? (
                 <div className="mt-4 flex justify-center gap-2">
                     <button
-                        className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition cursor-pointer"
+                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
                         onClick={() => onVote(proposal.id, true)}
                         disabled={loading}
                     >
                         Votar a favor
                     </button>
                     <button
-                        className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-500/50 transition cursor-pointer"
+                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
                         onClick={() => onVote(proposal.id, false)}
                         disabled={loading}
                     >

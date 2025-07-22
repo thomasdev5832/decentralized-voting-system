@@ -31,3 +31,9 @@ export const voteOnProposal = async (id: number, support: boolean) => {
   const tx = await contract.vote(id, support);
   await tx.wait();
 };
+
+export const createProposal = async (title: string, description: string) => {
+  const contract = await getWriteContract();
+  const tx = await contract.createProposal(title, description);
+  await tx.wait();
+};
