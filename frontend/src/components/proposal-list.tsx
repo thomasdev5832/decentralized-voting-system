@@ -10,7 +10,7 @@ export const ProposalsList = ({
     onVote: (id: number, support: boolean) => void;
     loading: boolean;
 }) => (
-    <div className="grid gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {proposals.map((p) => (
             <ProposalCard key={p.id} proposal={p} onVote={onVote} loading={loading} />
         ))}
