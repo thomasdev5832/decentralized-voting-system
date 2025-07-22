@@ -60,7 +60,7 @@ contract VotingSystem {
     mapping(uint256 => Proposal) public proposals;
 
     /// @notice Mapeia: ID da proposta => endereço do votante => se já votou
-    mapping(uint256 => mapping(address => bool)) private hasVoted;
+    mapping(uint256 => mapping(address => bool)) public hasVoted;
 
     /*///////////////////////////////////
                 Events
