@@ -8,7 +8,7 @@ export const Home = () => {
     const [modalOpen, setModalOpen] = useState(false);
 
     return (
-        <div className="max-w-5xl min-h-screen mx-auto flex flex-col items-center justify-start p-2 text-center bg-neutral-950 text-white">
+        <div className="max-w-5xl min-h-screen mx-auto flex flex-col items-center justify-start p-2 text-center bg-neutral-900 text-white">
             <header className="w-full flex flex-row items-center justify-between">
                 <h1 className="text-sm font-semibold uppercase text-zinc-100">Sistema de Votação Descentralizado</h1>
                 <ConnectWalletButton />

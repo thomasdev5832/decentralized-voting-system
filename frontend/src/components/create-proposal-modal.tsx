@@ -53,7 +53,7 @@ export const CreateProposalModal = ({
                 <h2 className="text-2xl font-bold mb-4 text-white">Criar Proposta</h2>
 
                 <input
-                    className="w-full p-3 rounded bg-neutral-800 text-white mb-3"
+                    className="w-full p-3 rounded bg-neutral-800 text-white mb-3 outline-none focus:ring-1 focus:ring-neutral-500"
                     placeholder="Título da proposta"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -61,7 +61,7 @@ export const CreateProposalModal = ({
                 />
 
                 <textarea
-                    className="w-full p-3 rounded bg-neutral-800 text-white resize-none"
+                    className="w-full p-3 rounded bg-neutral-800 text-white resize-none outline-none focus:ring-1 focus:ring-neutral-500"
                     rows={4}
                     placeholder="Descreva sua proposta"
                     value={description}
@@ -73,7 +73,7 @@ export const CreateProposalModal = ({
 
                 <div className="flex justify-end mt-4 gap-2">
                     <button
-                        className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white"
+                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-neutral-700 to-neutral-800 hover:from-neutral-700 hover:to-neutral-700 transition cursor-pointer"
                         onClick={onClose}
                         disabled={isCreating}
                     >
@@ -81,11 +81,11 @@ export const CreateProposalModal = ({
                     </button>
 
                     <button
-                        className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer"
                         onClick={handleSubmit}
                         disabled={isCreating}
                     >
-                        {isCreating ? 'Criando...' : 'Criar'}
+                        {isCreating ? 'Criando proposta...' : 'Criar proposta'}
                     </button>
                 </div>
             </div>
