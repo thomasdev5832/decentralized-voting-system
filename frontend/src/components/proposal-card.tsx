@@ -30,9 +30,12 @@ export const ProposalCard = ({
                     <p className="text-sm text-neutral-300 font-medium line-clamp-2">
                         {proposal.description}
                     </p>
-                    <p className="text-sm font-medium text-neutral-300">
-                        Prazo: {formatDeadline(proposal.deadline)}
-                    </p>
+                    <div className="flex flex-col text-sm">
+                        <span className="text-neutral-400">Prazo</span>
+                        <span className="font-medium text-neutral-100">
+                            {formatDeadline(proposal.deadline)}
+                        </span>
+                    </div>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                         <div className="bg-neutral-800 rounded-sm py-3 flex flex-col items-center justify-center">
                             <span className="text-sm text-zinc-400 font-medium">A favor</span>
@@ -54,7 +57,7 @@ export const ProposalCard = ({
                             <button
                                 onClick={() => setIsModalOpen(true)}
                                 disabled={loading}
-                                className="w-full font-semibold bg-gradient-to-t from-neutral-700 to-neutral-600 hover:from-neutral-800 hover:to-neutral-700 text-neutral-50 py-2 px-4 rounded-sm transition disabled:opacity-50 cursor-pointer shadow-md"
+                                className="w-full font-semibold bg-gradient-to-t from-neutral-300 to-neutral-200 hover:from-neutral-400 hover:to-neutral-300 text-neutral-950 py-2 px-4 rounded-sm transition duration-200 disabled:opacity-50 cursor-pointer shadow-md"
                             >
                                 Votar
                             </button>
