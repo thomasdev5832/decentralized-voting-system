@@ -9,7 +9,7 @@ export const ConnectWalletButton = () => {
         <button
             onClick={account ? disconnectWallet : connectWallet}
             disabled={loading}
-            className="mt-4 px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition cursor-pointer"
+            className="px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition cursor-pointer"
         >
             {loading ? (
                 'Connecting...'

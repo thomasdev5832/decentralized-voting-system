@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 import { ETH_SEPOLIA_RPC } from '../config/config';
 
-const CONTRACT_ADDRESS = '0xBB49Dfd518f8c0bcAc06cA95320ef516e820Aae2';
-const ABI = [
+export const CONTRACT_ADDRESS = '0xBB49Dfd518f8c0bcAc06cA95320ef516e820Aae2';
+export const ABI = [
   {
     anonymous: false,
     inputs: [
