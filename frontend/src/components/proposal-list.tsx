@@ -61,10 +61,13 @@ export const ProposalsList = ({ filter = 'all' }: ProposalsListProps) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [currentPage]);
 
-    if (loadingProposals) {
+    if (loadingProposals && proposals.length === 0) {
         return (
             <div className="flex items-center justify-center h-64">
-                <p className="text-gray-400">Carregando propostas...</p>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-gray-400">Carregando propostas...</p>
+                </div>
             </div>
         );
     }
@@ -72,12 +75,20 @@ export const ProposalsList = ({ filter = 'all' }: ProposalsListProps) => {
     if (errorProposals) {
         return (
             <div className="flex items-center justify-center h-64">
-                <p className="text-red-500">{errorProposals}</p>
+                <div className="text-center">
+                    <p className="text-red-500 mb-2">{errorProposals}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 text-sm bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors"
+                    >
+                        Tentar novamente
+                    </button>
+                </div>
             </div>
         );
     }
 
-    if (filteredProposals.length === 0) {
+    if (!loadingProposals && filteredProposals.length === 0) {
         return (
             <div className="flex items-center justify-center h-64">
                 <p className="text-gray-400">{getEmptyMessage()}</p>
@@ -94,15 +105,27 @@ export const ProposalsList = ({ filter = 'all' }: ProposalsListProps) => {
                     </div>
                 )}
 
-                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-fr">
-                    {paginatedProposals.map((proposal) => (
-                        <ProposalCard
-                            key={proposal.id}
-                            proposal={proposal}
-                            onVote={vote}
-                            loading={loadingVote}
-                        />
-                    ))}
+                {/* Overlay de loading durante atualizações */}
+                <div className="relative">
+                    {loadingProposals && proposals.length > 0 && (
+                        <div className="absolute inset-0 rounded-lg bg-neutral-900 flex items-center justify-center z-10">
+                            <div className="flex items-center gap-2 bg-neutral-900 px-4 py-2 rounded-lg">
+                                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                                <p className="text-gray-400 text-sm">Atualizando...</p>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-fr">
+                        {paginatedProposals.map((proposal) => (
+                            <ProposalCard
+                                key={proposal.id}
+                                proposal={proposal}
+                                onVote={vote}
+                                loading={loadingVote}
+                            />
+                        ))}
+                    </div>
                 </div>
             </main>
 

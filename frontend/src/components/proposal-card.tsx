@@ -72,38 +72,40 @@ export const ProposalCard = ({
 
             {/* Modal de votação */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-                    <div className="bg-neutral-900 border border-neutral-700 rounded-md shadow-lg w-full max-w-md p-6 text-neutral-200">
+                <div className="fixed inset-0 flex items-center justify-center bg-black/90 bg-opacity-60 z-50">
+                    <div className="bg-neutral-900 border border-neutral-700 rounded-md shadow-lg w-full max-w-md p-6 text-neutral-200 relative">
+                        <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="absolute top-4 right-4 p-1 rounded-full hover:bg-neutral-800 transition-colors cursor-pointer"
+                            aria-label="Fechar modal"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
                         <div className="space-y-4">
-                            <div>
+                            <div className="pr-6"> {/* Adicionado padding para não colidir com o X */}
                                 <h3 className="text-xl font-semibold text-left">
                                     Proposta: {proposal.title}
                                 </h3>
                                 <p className="text-md text-neutral-400 mt-1 text-left">{proposal.description}</p>
                             </div>
-                            <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-neutral-700">
+                            <div className="flex flex-row justify-between gap-2 pt-4 border-t border-neutral-700">
                                 <button
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="w-full sm:w-auto text-sm px-4 py-2 rounded-sm border font-medium border-neutral-700 hover:bg-neutral-800 transition cursor-pointer"
+                                    onClick={() => handleVote(false)}
+                                    disabled={loading}
+                                    className="w-full sm:w-auto text-sm flex-1 font-bold px-4 py-2 rounded-sm text-neutral-200 bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-600 transition cursor-pointer"
                                 >
-                                    Cancelar
+                                    Votar contra
                                 </button>
-                                <div className="flex flex-row gap-2 w-full sm:w-auto">
-                                    <button
-                                        onClick={() => handleVote(false)}
-                                        disabled={loading}
-                                        className="w-full sm:w-auto text-sm font-bold px-4 py-2 rounded-sm text-neutral-200 bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-600 transition cursor-pointer"
-                                    >
-                                        Contra
-                                    </button>
-                                    <button
-                                        onClick={() => handleVote(true)}
-                                        disabled={loading}
-                                        className="w-full sm:w-auto text-sm px-4 py-2 font-bold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer"
-                                    >
-                                        A favor
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => handleVote(true)}
+                                    disabled={loading}
+                                    className="w-full sm:w-auto text-sm flex-1 px-4 py-2 font-bold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer"
+                                >
+                                    Votar a favor
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -20,13 +20,13 @@ export const useProposals = (): UseProposalsReturn => {
     throw new Error('useProposals deve ser usado dentro de ProposalsProvider');
   }
   
-  const { proposals, loadProposals, setProposals } = context;
+  const { proposals, loadProposals, setProposals, isLoading: contextLoading } = context;
   const { signer, account } = useWallet();
 
-  const [loadingProposals, setLoadingProposals] = useState(false);
   const [loadingVote, setLoadingVote] = useState(false);
   const [errorProposals, setErrorProposals] = useState<string | null>(null);
   const [errorVote, setErrorVote] = useState<string | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // verifica votos dos usuários
   const checkUserVotes = useCallback(async (proposalsList: Proposal[]) => {
@@ -47,20 +47,18 @@ export const useProposals = (): UseProposalsReturn => {
   }, [account]);
 
   const loadProposalsWithStatus = useCallback(async () => {
-    setLoadingProposals(true);
     setErrorProposals(null);
     try {
-      // Carrega as propostas
       await loadProposals();
-      // Aguarda um momento para garantir que o contexto foi atualizado
-      await new Promise(resolve => setTimeout(resolve, 100));
     } catch (err) {
       console.error('Erro em loadProposalsWithStatus:', err);
       setErrorProposals('Erro ao carregar propostas');
     } finally {
-      setLoadingProposals(false);
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+      }
     }
-  }, [loadProposals]);
+  }, [loadProposals, isInitialLoad]);
 
   // verifica votos quando as propostas ou conta mudam
   useEffect(() => {
@@ -101,13 +99,15 @@ export const useProposals = (): UseProposalsReturn => {
 
   // Ao montar, carrega propostas pela primeira vez
   useEffect(() => {
-    loadProposalsWithStatus();
-  }, [loadProposalsWithStatus]);
+    if (isInitialLoad) {
+      loadProposalsWithStatus();
+    }
+  }, [loadProposalsWithStatus, isInitialLoad]);
 
   return {
     proposals,
     vote,
-    loadingProposals,
+    loadingProposals: contextLoading || isInitialLoad, // Combina ambos os loadings
     loadingVote,
     errorProposals,
     errorVote,

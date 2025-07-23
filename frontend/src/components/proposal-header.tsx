@@ -10,7 +10,7 @@ export const ProposalHeader = ({ onOpenModal, filter, setFilter }: ProposalHeade
     const { account } = useWallet();
 
     return (
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 w-full max-w-5xl mx-auto">
+        <div className="flex flex-row md:items-center justify-between mb-4 gap-4 w-full max-w-5xl mx-auto">
             <div className="flex items-center gap-4">
                 <h2 className="text-lg font-semibold text-neutral-300">Propostas</h2>
                 <select

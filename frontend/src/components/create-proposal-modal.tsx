@@ -60,9 +60,21 @@ export const CreateProposalModal = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
-            <div className="bg-neutral-900 p-6 rounded-lg shadow-lg w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-4 text-white">Criar Proposta</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/90 bg-opacity-60 z-50">
+            <div className="bg-neutral-900 p-6 rounded-lg shadow-lg w-full max-w-md relative">
+                {/* Botão de fechar (X) no topo direito */}
+                <button
+                    className="absolute top-4 right-4 p-1 rounded-full hover:bg-neutral-800 transition-colors text-neutral-400 hover:text-white cursor-pointer"
+                    onClick={handleClose}
+                    disabled={isCreating}
+                    aria-label="Fechar modal"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <h2 className="text-2xl font-bold mb-4 text-white pr-8">Criar Proposta</h2>
 
                 <input
                     className="w-full p-3 rounded bg-neutral-800 text-white mb-3 outline-none focus:ring-1 focus:ring-neutral-500"
@@ -86,14 +98,6 @@ export const CreateProposalModal = ({
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
                 <div className="flex justify-end mt-4 gap-2">
-                    <button
-                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-neutral-700 to-neutral-800 hover:from-neutral-700 hover:to-neutral-700 transition cursor-pointer disabled:opacity-50"
-                        onClick={handleClose}
-                        disabled={isCreating}
-                    >
-                        Cancelar
-                    </button>
-
                     <button
                         className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer disabled:opacity-50"
                         onClick={handleSubmit}
