@@ -4,7 +4,9 @@ pragma solidity 0.8.26;
 /*///////////////////////////////////
             Imports
 ///////////////////////////////////*/
-
+import "../lib/openzeppelin-manual/ReentrancyGuard.sol";
+import "../lib/openzeppelin-manual/Ownable.sol";
+import "../lib/openzeppelin-manual/Pausable.sol";
 /*///////////////////////////////////
            Interfaces
 ///////////////////////////////////*/
@@ -13,7 +15,7 @@ pragma solidity 0.8.26;
            Libraries
 ///////////////////////////////////*/
 
-contract VotingSystem {
+contract VotingSystem is ReentrancyGuard, Ownable, Pausable {
     /*///////////////////////////////////
             Type declarations
     ///////////////////////////////////*/
@@ -76,6 +78,10 @@ contract VotingSystem {
                 Errors
     ///////////////////////////////////*/
 
+    error EmptyTitle();
+    error EmptyDescription();
+    error ProposalNotFound();
+
     /*///////////////////////////////////
                 Modifiers
     ///////////////////////////////////*/
@@ -88,6 +94,10 @@ contract VotingSystem {
                 constructor
     ///////////////////////////////////*/
 
+    /// @notice Construtor do contrato
+    /// @param _initialOwner Endereço do proprietário inicial
+    constructor(address _initialOwner) Ownable(_initialOwner) {}
+
     /*///////////////////////////////////
             Receive&Fallback
     ///////////////////////////////////*/
@@ -99,12 +109,20 @@ contract VotingSystem {
     /// @notice Cria uma nova proposta com título e descrição
     /// @param _title Título da proposta
     /// @param _description Descrição da proposta
-    function createProposal(string memory _title, string memory _description) external {
+    function createProposal(string memory _title, string memory _description) external nonReentrant whenNotPaused {
         // Verifica se o titulo e descricao nao estão vazios
-        require(bytes(_title).length > 0, "Titulo nao pode ser vazio");
-        require(bytes(_description).length > 0, "Descricao nao pode ser vazia");
+        // Validações de entrada
+        if (bytes(_title).length == 0) {
+            revert EmptyTitle();
+        }
+        if (bytes(_description).length == 0) {
+            revert EmptyDescription();
+        }
+
         // Incrementa o contador de propostas para ser o ID unico da nova proposta
-        proposalCount++;
+        unchecked {
+            proposalCount++;
+        }
 
         // Cria nova proposta e armazena no mapeamento
         proposals[proposalCount] = Proposal({
@@ -124,7 +142,7 @@ contract VotingSystem {
     /// @notice Permite votar a favor (true) ou contra (false) uma proposta
     /// @param _proposalId ID da proposta a ser votada
     /// @param support true = a favor, false = contra
-    function vote(uint256 _proposalId, bool support) external {
+    function vote(uint256 _proposalId, bool support) external nonReentrant whenNotPaused {
         // Verifica se a proposta existe
         Proposal storage proposal = proposals[_proposalId];
         require(proposal.id != 0, "Proposta inexistente");
@@ -136,9 +154,14 @@ contract VotingSystem {
 
         // Registra o voto e incrementa contadores
         if (support) {
-            proposal.votesFor++;
+            // Usa unchecked para evitar overflow
+            unchecked {
+                proposal.votesFor++;
+            }
         } else {
-            proposal.votesAgainst++;
+            unchecked {
+                proposal.votesAgainst++;
+            }
         }
 
         // Marca que o usuário já votou nessa proposta
@@ -156,6 +179,20 @@ contract VotingSystem {
     }
 
     /*///////////////////////////////////
+                Owner Functions
+    ///////////////////////////////////*/
+
+    /// @notice Pausa o contrato (apenas owner)
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    /// @notice Despausa o contrato (apenas owner)
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
+    /*///////////////////////////////////
                 public
     ///////////////////////////////////*/
 
@@ -165,7 +202,9 @@ contract VotingSystem {
     function getResult(uint256 _proposalId) public view returns (string memory) {
         // Verifica se a proposta existe
         Proposal memory proposal = proposals[_proposalId];
-        require(proposal.id != 0, "Proposta inexistente");
+        if (proposal.id == 0) {
+            revert ProposalNotFound();
+        }
 
         // Retorna o resultado armazenado
         if (proposal.result == ResultType.APPROVED) {

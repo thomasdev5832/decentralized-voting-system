@@ -11,8 +11,9 @@ contract VotingSystemScript is Script {
 
     function run() public {
         vm.startBroadcast();
+        address owner = msg.sender;
 
-        votingSystem = new VotingSystem();
+        votingSystem = new VotingSystem(owner);
 
         vm.stopBroadcast();
     }

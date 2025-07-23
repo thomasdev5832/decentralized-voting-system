@@ -6,12 +6,16 @@ import {VotingSystem} from "../src/VotingSystem.sol";
 
 contract VotingSystemTest is Test {
     VotingSystem public votingSystem;
-    address public user1 = address(0x1);
-    address public user2 = address(0x2);
-    address public user3 = address(0x3);
+    address public owner = address(0x1);
+    address public user1 = address(0x2);
+    address public user2 = address(0x3);
 
     function setUp() public {
-        votingSystem = new VotingSystem();
+        votingSystem = new VotingSystem(owner);
+    }
+
+    function proposalCount() public view returns (uint256) {
+        return votingSystem.proposalCount();
     }
 
     /// @notice Testa a criacao de uma proposta
@@ -132,5 +136,71 @@ contract VotingSystemTest is Test {
         // Verifica o resultado (empate resulta em Rejeitada)
         resultStr = votingSystem.getResult(2);
         assertEq(resultStr, "Rejeitada", "Resultado deve ser Rejeitada em caso de empate");
+    }
+
+    function testMultipleVotes() public {
+        votingSystem.createProposal("Test", "Test");
+
+        // User1 vota a favor
+        vm.prank(user1);
+        votingSystem.vote(1, true);
+
+        // User2 vota contra
+        vm.prank(user2);
+        votingSystem.vote(1, false);
+
+        // Verifica resultado
+        (,,, uint256 forVotes, uint256 againstVotes,,) = votingSystem.proposals(1);
+        assertEq(forVotes, 1, "1 voto a favor");
+        assertEq(againstVotes, 1, "1 voto contra");
+
+        // Verifica se getResult retorna "Rejeitada" em caso de empate
+        assertEq(votingSystem.getResult(1), "Rejeitada");
+    }
+
+    /// @notice Testa se título e descrição sao vazios
+    function testEmptyTitleAndDescription() public {
+        // Tenta criar proposta com título vazio
+        vm.expectRevert(VotingSystem.EmptyTitle.selector);
+        votingSystem.createProposal("", "Descricao valida");
+
+        // Tenta criar proposta com descrição vazia
+        vm.expectRevert(VotingSystem.EmptyDescription.selector);
+        votingSystem.createProposal("Titulo valido", "");
+
+        // Tenta criar proposta com ambos vazios
+        vm.expectRevert(VotingSystem.EmptyTitle.selector); // O primeiro erro que será encontrado
+        votingSystem.createProposal("", "");
+
+        // Verifica que nenhuma proposta foi criada
+        assertEq(votingSystem.proposalCount(), 0, "Nenhuma proposta deveria ter sido criada");
+    }
+
+    /// @notice Testa se qualquer usuário pode criar uma proposta
+    function testAnyoneCanCreateProposal() public {
+        // 1. Testa com endereço não registrado (deve funcionar)
+        address anon = address(0x999);
+        vm.prank(anon);
+        votingSystem.createProposal("Proposta 1", "Descricao valida");
+        assertEq(votingSystem.proposalCount(), 1, "Deveria poder criar proposta");
+
+        // 2. Verifica os dados da última proposta criada
+        (
+            uint256 id,
+            string memory title,
+            string memory description,
+            uint256 votesFor,
+            uint256 votesAgainst,
+            uint256 deadline,
+            VotingSystem.ResultType result
+        ) = votingSystem.proposals(1);
+
+        assertEq(id, 1, "ID incorreto");
+        assertEq(title, "Proposta 1", "Titulo incorreto");
+        assertEq(description, "Descricao valida", "Descricao incorreta");
+        assertEq(votesFor, 0, "Votos a favor devem ser zero");
+        assertEq(votesAgainst, 0, "Votos contra devem ser zero");
+        assertEq(uint256(result), uint256(VotingSystem.ResultType.REJECTED), "Resultado inicial deve ser REJECTED");
+        assertEq(deadline, block.timestamp + 604800, "Deadline incorreto");
     }
 }
