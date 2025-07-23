@@ -206,6 +206,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
                 ethereum.removeListener('disconnect', disconnectWallet);
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account]);
 
     return (

@@ -33,7 +33,7 @@ export const ProposalsList = ({ filter = 'all' }: ProposalsListProps) => {
             default:
                 return true;
         }
-    });
+    }).reverse();
 
     useEffect(() => {
         const total = Math.ceil(filteredProposals.length / ITEMS_PER_PAGE);
