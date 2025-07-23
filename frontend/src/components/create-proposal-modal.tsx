@@ -35,13 +35,25 @@ export const CreateProposalModal = ({
             await createProposal(title, description);
             setTitle('');
             setDescription('');
-            await loadProposals();
             onClose();
+            // Aguarda um pequeno delay para garantir que a transação foi processada
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Recarregar as propostas
+            await loadProposals();
         } catch (err) {
             console.error(err);
             setError('Erro ao criar proposta. Tente novamente.');
         } finally {
             setIsCreating(false);
+        }
+    };
+
+    const handleClose = () => {
+        if (!isCreating) {
+            setTitle('');
+            setDescription('');
+            setError(null);
+            onClose();
         }
     };
 
@@ -75,15 +87,15 @@ export const CreateProposalModal = ({
 
                 <div className="flex justify-end mt-4 gap-2">
                     <button
-                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-neutral-700 to-neutral-800 hover:from-neutral-700 hover:to-neutral-700 transition cursor-pointer"
-                        onClick={onClose}
+                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-neutral-700 to-neutral-800 hover:from-neutral-700 hover:to-neutral-700 transition cursor-pointer disabled:opacity-50"
+                        onClick={handleClose}
                         disabled={isCreating}
                     >
                         Cancelar
                     </button>
 
                     <button
-                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer"
+                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer disabled:opacity-50"
                         onClick={handleSubmit}
                         disabled={isCreating}
                     >

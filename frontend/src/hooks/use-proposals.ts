@@ -15,7 +15,12 @@ interface UseProposalsReturn {
 }
 
 export const useProposals = (): UseProposalsReturn => {
-  const { proposals, loadProposals, setProposals } = useContext(ProposalsContext)!; // usa contexto global
+  const context = useContext(ProposalsContext);
+  if (!context) {
+    throw new Error('useProposals deve ser usado dentro de ProposalsProvider');
+  }
+  
+  const { proposals, loadProposals, setProposals } = context;
   const { signer, account } = useWallet();
 
   const [loadingProposals, setLoadingProposals] = useState(false);
@@ -23,30 +28,53 @@ export const useProposals = (): UseProposalsReturn => {
   const [errorProposals, setErrorProposals] = useState<string | null>(null);
   const [errorVote, setErrorVote] = useState<string | null>(null);
 
-  // Load proposals wrapper to set loading and error states locally, mas atualizar contexto global
+  // verifica votos dos usuários
+  const checkUserVotes = useCallback(async (proposalsList: Proposal[]) => {
+    if (!account || proposalsList.length === 0) return proposalsList;
+    
+    try {
+      const updatedProposals = await Promise.all(
+        proposalsList.map(async (proposal) => {
+          const hasVoted = await checkHasVoted(proposal.id, account);
+          return { ...proposal, hasVoted };
+        })
+      );
+      return updatedProposals;
+    } catch (err) {
+      console.error('Erro ao verificar votos:', err);
+      return proposalsList;
+    }
+  }, [account]);
+
   const loadProposalsWithStatus = useCallback(async () => {
     setLoadingProposals(true);
     setErrorProposals(null);
     try {
-      await loadProposals(); // Carrega as propostas
-      if (account) {
-        const updatedProposals = await Promise.all(
-          proposals.map(async (proposal) => {
-            const hasVoted = await checkHasVoted(proposal.id, account);
-            return { ...proposal, hasVoted };
-          })
-        );
-        setProposals(updatedProposals); // Atualiza o contexto
-      } else {
-        console.log('Nenhuma conta conectada');
-      }
+      // Carrega as propostas
+      await loadProposals();
+      // Aguarda um momento para garantir que o contexto foi atualizado
+      await new Promise(resolve => setTimeout(resolve, 100));
     } catch (err) {
       console.error('Erro em loadProposalsWithStatus:', err);
       setErrorProposals('Erro ao carregar propostas');
     } finally {
       setLoadingProposals(false);
     }
-  }, [loadProposals, account, setProposals]); 
+  }, [loadProposals]);
+
+  // verifica votos quando as propostas ou conta mudam
+  useEffect(() => {
+    const updateVoteStatus = async () => {
+      if (proposals.length > 0) {
+        const updatedProposals = await checkUserVotes(proposals);
+        if (JSON.stringify(updatedProposals) !== JSON.stringify(proposals)) {
+          setProposals(updatedProposals);
+        }
+      }
+    };
+
+    updateVoteStatus();
+  }, [proposals, checkUserVotes, setProposals, account]);
 
   // Função votar
   const vote = useCallback(
@@ -59,7 +87,8 @@ export const useProposals = (): UseProposalsReturn => {
       setErrorVote(null);
       try {
         await voteOnProposal(id, support);
-        await loadProposalsWithStatus(); // atualiza lista após voto
+        // Recarrega as propostas após votar
+        await loadProposalsWithStatus();
       } catch (err) {
         console.error(err);
         setErrorVote('Erro ao votar');
