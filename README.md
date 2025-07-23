@@ -26,18 +26,6 @@
 
 <hr> -->
 
-<p align="center">
-  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
-  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
-  <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
-  <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
-  <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
-  <a href="#memo-license">License</a> &#xa0; | &#xa0;
-  <a href="https://github.com/{{YOUR_GITHUB_USERNAME}}" target="_blank">Author</a>
-</p>
-
-<br>
-
 ## About
 
 Sistema de votação descentralizado implementado em Solidity com frontend em React, permitindo que usuários criem propostas e votem de forma anônima e transparente na blockchain.
@@ -328,8 +316,8 @@ amoy = { key = "${ETHERSCAN_API_KEY}", url = "https://api-amoy.polygonscan.com/a
     - Próximos passos: implementar ZK-Snarks para anonimato mantendo a auditabilidade. Pseudonimização só é válida para cenários não sensíveis.
 
 - Pouco Faucet POL na Polygon Amoy disponível
-  - Solução: implementar inicialmente na rede ETH Sepolia 
-  - Depois consegui receber 100 POL pelo Bulk da Faucet Polygon Technology
+  - A escassez de POL na testnet Amoy dificultaram os testes.
+  - Solução temporária: optou-se por implementar primeiro na Sepolia, que possui faucets mais acessíveis. Posteriormente foi possível obter 100 POL através do Bulk Faucet da Polygon Technology, permitindo a migração para a Amoy.
 
 - RPCs da Polygon Amoy são instáveis e possuem rate limits
 
