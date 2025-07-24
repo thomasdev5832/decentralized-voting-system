@@ -63,12 +63,23 @@ export const ProposalCard = ({
         <>
             <div className="border border-neutral-800 rounded-md bg-gradient-to-b from-neutral-800/80 to-neutral-900 text-zinc-200 p-4 flex flex-col justify-between h-full shadow-sm">
                 <div className="flex flex-col gap-3 text-left">
-                    <h2 className="text-lg font-semibold leading-tight line-clamp-1">
-                        {proposal.title}
-                    </h2>
-                    <p className="text-xs text-neutral-300 font-medium line-clamp-2">
-                        {proposal.description}
-                    </p>
+                    <div className="group relative">
+                        <h2 className="text-lg font-semibold leading-tight line-clamp-2">
+                            {proposal.title}
+                        </h2>
+                        <div className="absolute hidden group-hover:block z-10 w-full max-w-xs p-2 bg-neutral-800 border border-neutral-600 rounded-sm shadow-lg text-sm font-normal break-words">
+                            {proposal.title}
+                        </div>
+                    </div>
+
+                    <div className="group relative">
+                        <p className="text-sm text-neutral-300 font-medium line-clamp-2 ">
+                            {proposal.description}
+                        </p>
+                        <div className="absolute hidden group-hover:block z-10 w-full max-w-xs p-2 bg-neutral-800 border border-neutral-600 rounded-sm shadow-lg text-xs font-normal break-words">
+                            {proposal.description}
+                        </div>
+                    </div>
                     <div className="flex flex-col text-sm">
                         <span className="text-neutral-400">Prazo</span>
                         <span className="font-medium text-neutral-100">
