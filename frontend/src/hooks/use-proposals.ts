@@ -90,6 +90,7 @@ export const useProposals = (): UseProposalsReturn => {
       } catch (err) {
         console.error(err);
         setErrorVote('Erro ao votar');
+        throw err; // Re-throw
       } finally {
         setLoadingVote(false);
       }

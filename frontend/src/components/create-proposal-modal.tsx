@@ -61,7 +61,7 @@ export const CreateProposalModal = ({
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/90 bg-opacity-60 z-50">
-            <div className="bg-neutral-900 p-6 rounded-lg shadow-lg w-full max-w-md relative">
+            <div className="bg-neutral-900 p-6 rounded-lg shadow-lg w-full max-w-md relative mx-4">
                 {/* Botão de fechar (X) no topo direito */}
                 <button
                     className="absolute top-4 right-4 p-1 rounded-full hover:bg-neutral-800 transition-colors text-neutral-400 hover:text-white cursor-pointer"
@@ -97,9 +97,9 @@ export const CreateProposalModal = ({
 
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-                <div className="flex justify-end mt-4 gap-2">
+                <div className="flex justify-center mt-4 gap-2">
                     <button
-                        className="px-3 py-2 font-semibold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer disabled:opacity-50"
+                        className="w-full px-3 py-3 font-semibold rounded-sm bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-600 transition cursor-pointer disabled:opacity-50"
                         onClick={handleSubmit}
                         disabled={isCreating}
                     >
