@@ -125,22 +125,31 @@ O contrato possui cobertura completa de testes usando Foundry:
 ##### Testes Funcionais Principais
 
 ✅ testCreateProposal - Criação de propostas com validação completa
+
 ✅ testUserAlreadyVoted - Proteção contra dupla votação
+
 ✅ testAnyoneCanConsultVotes - Consulta pública de resultados
+
 ✅ testGetResultAfterDeadline - Resultado automático após prazo
+
 ✅ testProposalDuration - Validação de duração de 1 semana
+
 ✅ testVotesAfterDeadline - Bloqueio de votos após prazo
 
 ##### Testes de Validação
 
 ✅ testEmptyTitleAndDescription - Validação de campos obrigatórios
+
 ✅ testAnyoneCanCreateProposal - Verificação de acesso público
+
 ✅ testMultipleVotes - Cenários de empate e múltiplos votantes
 
 ##### Testes de Segurança
 
 ✅ testCreateProposalReentrancy - Proteção contra reentrância na criação
+
 ✅ testVoteReentrancy - Proteção contra reentrância na votação
+
 ✅ MaliciousAttacker Contract - Simulação de ataques reais
 
 ##### Executar Testes
@@ -295,7 +304,7 @@ amoy = { key = "${ETHERSCAN_API_KEY}", url = "https://api-amoy.polygonscan.com/a
 #### Configuração da integração do Frontend com contrato na blockchain
 
 ```
-# Acessar pasta frontend/src/contracts/contract.ts
+# Acessar frontend/src/contracts/contract.ts
 
 # Atualizar o CONTRACT_ADDRESS com o endereço do novo contrato
 # Atualizar o ABI com o ABI do novo contrato
